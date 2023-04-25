@@ -1,0 +1,84 @@
+
+*******************************************************services
+ben-caf/solicitud/create 							"Creacion de solicitud" 									(Ag)
+ben-caf/solicitud/validate 							"Validacion de solicitud" 									(Ben)
+ben-caf/solicitud/update							"Cambiar estado de la solicitud"							(Ben)
+ben-caf/accounts/create								"Creacion de cuenta"										(Ben)
+ben-caf/accounts/update								"Modificacion de estado"									(Ben)
+ben-caf/partialities/create							"Ingreso parcialidad"										(Ag)
+ben-caf/partialities/validate						"Validacion de parcialidad"									(Ben)
+ben-caf/weight/create								"Ingreso de peso"											(Pes)
+ben-caf/generate/qr									"Generar QR, con peso de la bascula"						(Pes)
+
+
+*******************************************************tables
+--Solicitudes
+id
+estado
+camion
+cant_parc
+usuario_creacion
+fecha_creacion
+usuario_modificacion
+fecha_modificacion
+
+--transportes
+placa
+marca
+color
+
+
+--Rechazos
+id
+id_solicitud
+observaciones
+usuario_creacion
+fecha_creacion
+
+--Cuentas
+id
+no_cuenta
+estado_cuenta
+id_solicitud
+usuario_creacion
+fecha_creacion
+usuario_modificacion
+fecha_modificacion
+
+--Parcialidades
+id
+id_solicitud 
+peso_enviado
+placa
+conductor
+usuario_creacion
+fecha_creacion
+usuario_modificacion
+fecha_modificacion
+
+--Pesajes bascula
+id
+id_parcialidad
+peso_bascula
+usuario_creacion
+fecha_creacion
+usuario_modificacion
+fecha_modificacion
+
+--Impresiones bascula 
+id
+id_pesaje 
+usuario_creacion
+fecha_creacion
+usuario_modificacion
+fecha_modificacion
+
+--Anexos
+id
+id_solicitud
+observaciones
+sobrante/Faltante
+usuario_creacion
+fecha_creacion
+usuario_modificacion
+fecha_modificacion
