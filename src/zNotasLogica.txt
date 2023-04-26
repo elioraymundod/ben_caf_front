@@ -1,6 +1,6 @@
 
 *******************************************************services
-api/ben-caf/solicitud/create 							"Creacion de solicitud" 									(Ag)
+*********api/ben-caf/solicitud/create 							"Creacion de solicitud" 									(Ag)
 api/ben-caf/solicitud/validate 							"Validacion de solicitud" 									(Ben)
 api/ben-caf/solicitud/update							"Cambiar estado de la solicitud"							(Ben)
 api/ben-caf/accounts/create								"Creacion de cuenta"										(Ben)
@@ -9,8 +9,9 @@ api/ben-caf/partialities/create							"Ingreso parcialidad"										(Ag)
 api/ben-caf/partialities/validate						"Validacion de parcialidad"									(Ben)
 api/ben-caf/weight/create								"Ingreso de peso"											(Pes)
 api/ben-caf/generate/qr									"Generar QR, con peso de la bascula"						(Pes)
-**api/ben-caf/users/create								"Crear usuario"												(Ben)
-**api/ben-caf/users/login								"Loguearse"
+api/ben-caf/generate/qr									"Generar QR, con peso de la bascula"						(Pes)
+*********api/ben-caf/users/create								"Crear usuario"												(Ben)
+*********api/ben-caf/users/login								"Loguearse"
 
 
 *******************************************************tables
