@@ -195,6 +195,11 @@ min-width: none !important;
   position: relative;
 }
 
+.colorTerceario {
+  background-color: #7B241C;
+  position: relative;
+}
+
 .colorSecundario:hover {
   background: rgba(51, 89, 48, 1);
 }

@@ -48,7 +48,7 @@
                     </mat-card>
 
                     <mat-card
-                        class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
+                        [class]="estadoPiloto === 'Transportista permitido' ? 'col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center' : 'col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorTerceario heightOptions d-flex justify-content-center'"
                         style="cursor: pointer">
                         <mat-icon class="iconOptions mt-3">accessibility</mat-icon>
                         <mat-card-title class="text-center tituloCampo textOptions"
