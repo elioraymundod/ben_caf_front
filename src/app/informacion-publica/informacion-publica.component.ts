@@ -20,7 +20,7 @@ export class InformacionPublicaComponent implements OnInit {
       this.licenciaTransportista = params.get('transportista');
       
       let consultaPiloto = {
-        "licencia": this.licenciaTransportista
+        "licencia": "https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/piloto"+this.licenciaTransportista
       }
       this.loginService.getPiloto(consultaPiloto).subscribe(res => {
         this.informacionPiloto = res;
