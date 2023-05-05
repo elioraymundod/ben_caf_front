@@ -14,13 +14,17 @@ export class UserGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem('token');
       const role = localStorage.getItem('role');
+      console.log(localStorage.getItem('accessToken'), "elssjfe;lfjlej;")
       if (!token) {
         this.router.navigate(['login'])
         return false;
       } else {
         return true;
       }
+      setTimeout(() => {
+       
+      }, 200);
     }
 }
