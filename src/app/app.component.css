@@ -1,0 +1,12 @@
+.headerTable {
+    background-color: #2294B3;
+    color: white;
+    text-align: left;
+    font-size: 14px;
+}
+
+table {
+    text-align: justify;
+    margin: auto;
+    width: 100%;
+}

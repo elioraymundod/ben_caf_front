@@ -1,0 +1,63 @@
+<div class="card-body" style="margin-top: 2%; margin-left: 3%; margin-right: 3%;">
+    <div class="titulo">
+        <mat-card-title class="text-center m-2 encabezado">Consulta de Transportista</mat-card-title>
+    </div>
+
+    <div class="carousel-inner" data-interval="false">
+        <div class="carousel-item active">
+            <mat-card class="mt-5 backgroundIcons">
+                <div class="row d-flex justify-content-center">
+                    <mat-card
+                        class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
+                        style="cursor: pointer">
+                        <mat-icon class="iconOptions mt-3">person_pin_circle</mat-icon>
+                        <mat-card-title class="text-center tituloCampo textOptions"
+                            style="margin-top: 80px">Nombre conductor</mat-card-title>
+                        <mat-card-title class="text-center enlaces textOptions"
+                            style="margin-top: 105px">{{informacionPiloto.nombre}}</mat-card-title>
+                    </mat-card>
+
+                    <mat-card
+                        class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
+                        style="cursor: pointer">
+                        <mat-icon class="iconOptions mt-3">email</mat-icon>
+                        <mat-card-title class="text-center tituloCampo textOptions"
+                            style="margin-top: 80px">Correo conductor</mat-card-title>
+                        <mat-card-title class="text-center enlaces textOptions"
+                            style="margin-top: 105px">{{informacionPiloto.correo}}</mat-card-title>
+                    </mat-card>
+
+                    <mat-card
+                        class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
+                        style="cursor: pointer">
+                        <mat-icon class="iconOptions mt-3">phone_iphone</mat-icon>
+                        <mat-card-title class="text-center tituloCampo textOptions"
+                            style="margin-top: 80px">Celular</mat-card-title>
+                        <mat-card-title class="text-center enlaces textOptions"
+                            style="margin-top: 105px">{{informacionPiloto.celular}}</mat-card-title>
+                    </mat-card>
+
+                    <mat-card
+                        class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
+                        style="cursor: pointer">
+                        <mat-icon class="iconOptions mt-3">picture_in_picture</mat-icon>
+                        <mat-card-title class="text-center tituloCampo textOptions"
+                            style="margin-top: 80px">Licencia</mat-card-title>
+                        <mat-card-title class="text-center enlaces textOptions"
+                            style="margin-top: 105px">{{informacionPiloto.licenciaPiloto}}</mat-card-title>
+                    </mat-card>
+
+                    <mat-card
+                        class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
+                        style="cursor: pointer">
+                        <mat-icon class="iconOptions mt-3">accessibility</mat-icon>
+                        <mat-card-title class="text-center tituloCampo textOptions"
+                            style="margin-top: 80px">Estatus en Beneficio</mat-card-title>
+                        <mat-card-title class="text-center enlaces textOptions"
+                            style="margin-top: 105px">{{informacionPiloto.permitidoEnBeneficio === true ? "Transportista permitido" : "Transportista no permitido"}}</mat-card-title>
+                    </mat-card>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</div>

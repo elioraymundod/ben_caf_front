@@ -1,0 +1,35 @@
+.titulo{
+    text-align: center; 
+    background: #335930; 
+    color: white; 
+    height: 40px; 
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    margin: 3%;
+}
+
+.margenArriba {
+    margin: 3%;
+    background-color: #D1E8CF;
+}
+
+.tamanio{
+    width: 100%;
+}
+
+.tamanioTextArea{
+    height: 100px;
+}
+
+.botones{
+    margin-left: 2%;
+    color: white;
+    background-color: #335930;
+    outline: none;
+}
+
+.margenBotones {
+    margin-left: 2%;
+}

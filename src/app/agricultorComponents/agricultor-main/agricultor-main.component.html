@@ -1,0 +1,875 @@
+<div class="card-body" style="margin-top: 2%; margin-left: 3%; margin-right: 3%;">
+    <div class="titulo">
+        <mat-card-title class="text-center m-2 encabezado">Bandeja del Agricultor</mat-card-title>
+    </div>
+
+    <!--div id="carouselExampleIndicators" class="carousel slide" data-interval="false">
+        <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        </ol>
+    </div-->
+    <div class="carousel-inner" data-interval="false">
+        <div [class]="item.class" *ngFor="let item of opcionesMenu">
+            <mat-card class="mt-5 backgroundIcons">
+                <div class="row d-flex justify-content-center">
+                    <mat-card-title style="position: absolute">{{item.tituloSeccion}}</mat-card-title>
+                    <mat-card
+                        class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
+                        style="cursor: pointer" (click)="openDialog(opcion.accion)" data-toggle="modal"
+                        data-target="#opcionesGenerales" *ngFor="let opcion of item.opciones">
+                        <mat-icon class="iconOptions mt-3">{{opcion.icono}}</mat-icon>
+                        <mat-card-title class="text-center tituloCampo textOptions"
+                            style="margin-top: 80px">{{opcion.nombre}}</mat-card-title>
+                        <mat-card-title class="text-center enlaces textOptions" (click)="openDialog(item)"
+                            style="margin-top: 105px">{{opcion.descripcion}}</mat-card-title>
+                    </mat-card>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+    <!--a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true" style="color: black"></span>
+        <span class="sr-only">Next</span>
+    </a-->
+</div>
+
+<!--Modal con formularios-->
+<div class="modal fade bd-example-modal-xl" id="opcionesGenerales" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">{{this.tituloFormulario}}</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <mat-horizontal-stepper>
+                        <mat-step *ngFor="let step of controles">
+                            <ng-template matStepLabel *ngIf="step.tituloStep">{{step.tituloStep}}</ng-template>
+                            <div class="row">
+                                <div class="col-12 mt-2">
+                                    <form [formGroup]="controlesFormGroup">
+                                        <div class="row" *ngFor="let item of step.controles">
+                                            <!--div class="" style="position: relative; align-items: center;">
+                                            <mat-card-title>{{item.tituloSeccion}}</mat-card-title>
+                                        </div-->
+                                            <label class="col-3 mt-3"><b>{{item.nombrefila}}</b></label>
+                                            <div [ngSwitch]="item.tipo" [class]="item.class">
+                                                <div *ngSwitchCase="'input'">
+                                                    <mat-form-field class="col-12">
+                                                        <mat-label>{{item.nombre}}</mat-label>
+                                                        <input matInput #campo formControlName="{{item.id}}"
+                                                            maxlength="{{item.maxLength}}" autocomplete="off"
+                                                            (change)="item.change == true ? item.accion() : ''"
+                                                            (keypress)="item.keypress == true ? this.soloNumeros($event) : ''">
+                                                        <mat-hint *ngIf="item.maxLength > 0" align="end">
+                                                            {{campo.value.length}}
+                                                            / {{item.maxLength}}
+                                                        </mat-hint>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div *ngSwitchCase="'textarea'">
+                                                    <mat-form-field class="col-ms-12 col-md-12 col-lg-12">
+                                                        <mat-label>{{item.nombre}}</mat-label>
+                                                        <textarea matInput #campo formControlName="{{item.id}}"
+                                                            maxlength="{{item.maxLength}}" autocomplete="off">
+                                                    </textarea>
+                                                        <mat-hint *ngIf="item.maxLength > 0" align="end">
+                                                            {{campo.value.length}}
+                                                            / {{item.maxLength}}
+                                                        </mat-hint>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                            <!--Controles complementarios, se muestran en una misma fila-->
+                                            <div *ngIf="item.controlesComplemento" [class]="item.restclass" class="col">
+                                                <div *ngFor="let complement of item.controlesComplemento">
+                                                    <div [ngSwitch]="complement.tipo" [class]="complement.class">
+                                                        <div *ngSwitchCase="'input'">
+                                                            <mat-form-field class="col-12">
+                                                                <mat-label>{{complement.nombre}}</mat-label>
+                                                                <input matInput #campo
+                                                                    formControlName="{{complement.id}}"
+                                                                    maxlength="{{complement.maxLength}}"
+                                                                    autocomplete="off"
+                                                                    (change)="complement.change == true ? complement.accion() : ''"
+                                                                    (keypress)="item.keypress == true ? this.soloNumeros($event) : ''">
+                                                                <mat-hint *ngIf="complement.maxLength > 0" align="end">
+                                                                    {{campo.value.length}}
+                                                                    / {{complement.maxLength}}
+                                                                </mat-hint>
+                                                            </mat-form-field>
+                                                        </div>
+
+                                                        <div *ngSwitchCase="'select'">
+                                                            <mat-form-field>
+                                                                <mat-label>{{complement.nombre}}</mat-label>
+                                                                <mat-select formControlName="{{complement.id}}">
+                                                                    <mat-option
+                                                                        *ngFor="let option of complement.seleccionable"
+                                                                        [value]="option.id">
+                                                                        {{option.viewValue}}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                            </mat-form-field>
+                                                        </div>
+                                                        <div *ngSwitchCase="'date'">
+                                                            <mat-form-field>
+                                                                <mat-label>{{item.nombre}}</mat-label>
+                                                                <input matInput #campo [matDatepicker]="picker"
+                                                                    formControlName="{{item.id}}" readonly>
+                                                                <mat-datepicker-toggle matSuffix [for]="picker">
+                                                                    <mat-icon
+                                                                        matDatepickerToggleIcon>date_range</mat-icon>
+                                                                </mat-datepicker-toggle>
+                                                                <mat-datepicker #picker></mat-datepicker>
+                                                            </mat-form-field>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngFor="let btn of botonesSecundarios"
+                                            class="row d-flex justify-content-center mt-4">
+                                            <button mat-raised-button [class]="btn.class" (click)="btn.click()"
+                                                [disabled]="controlesFormGroup.invalid">
+                                                <mat-icon *ngIf="btn.icono">{{btn.icono}}</mat-icon>
+                                                {{btn.nombre}}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <button mat-button matStepperPrevious *ngIf="step.previous"
+                                    class="botonesStepper mr-2">Regresar</button>
+                                <button mat-button matStepperNext *ngIf="step.next"
+                                    class="botonesStepper ml-2">Siguiente</button>
+                            </div>
+                        </mat-step>
+                    </mat-horizontal-stepper>
+                </div>
+                <div *ngIf="showTable">
+
+                    <div class="mat-elevation-z8" *ngIf="showTable">
+                        <div class="table-responsive">
+                            <table mat-table [dataSource]="dataSource" multiTemplateDataRows>
+                                <ng-container matColumnDef="{{column.id}}" *ngFor="let column of columnsToDisplay">
+                                    <div [ngSwitch]="column.id">
+                                        <div *ngSwitchDefault>
+                                            <th mat-header-cell *matHeaderCellDef class="headerTable">
+                                                {{column.displayName}} </th>
+                                            <td mat-cell *matCellDef="let element">
+                                                {{ element[column.id] }} </td>
+                                        </div>
+                                        <div *ngSwitchCase="'accion'">
+                                            <th mat-header-cell *matHeaderCellDef class="headerTable">
+                                                {{column.displayName}}
+                                            </th>
+                                            <td mat-cell *matCellDef="let element">
+                                                <span class="material-icons" title="{{column.titleAccion}}"
+                                                    style="cursor: pointer;"
+                                                    (click)="column.accion(element)">{{column.icono}}</span>
+                                                <span class="material-icons" title="{{column.secondTitleAccion}}"
+                                                    style="cursor: pointer;" (click)="column.secondAccion(element)"
+                                                    *ngIf="(element.estado === 'Cuenta creada' || element.estado === 'Pesaje iniciado' || element.estado === 'Cuenta abierta') && element.parcialidadesCompletas === true">{{column.secondIcon}}</span>
+
+                                                <span class="material-icons" title="Descargar Carnet Transportista"
+                                                    style="cursor: pointer;"
+                                                    (click)="descargarQr(element)">person_pin</span>
+                                            </td>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnsChildrenIds"></tr>
+                                <tr mat-row *matRowDef="let element; columns: columnsChildrenIds;"
+                                    class="example-element-row">
+                                </tr>
+
+                            </table>
+                        </div>
+                        <mat-paginator [length]="dataSource.data.length" [pageSize]="5"
+                            showFirstLastButtons></mat-paginator>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div *ngFor="let btn of botonesFooter">
+                        <button mat-raised-button [class]="btn.class" (click)="btn.click()"
+                            [disabled]="btn.disable && controlesFormGroup.invalid">
+                            <mat-icon *ngIf="btn.icono">{{btn.icono}}</mat-icon>
+                            {{btn.nombre}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal Secundario con formularios-->
+<div class="modal fade bd-example-modal-xl" id="modalSecundary" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">{{tituloModalSecundario}}</mat-card-title>
+                    </div>
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 mt-2">
+                            <form [formGroup]="controlesSecundariosFormGroup">
+                                <div class="row" *ngFor="let item of controlesModalSecundario">
+                                    <!--div class="" style="position: relative; align-items: center;">
+                                     <mat-card-title>{{item.tituloSeccion}}</mat-card-title>
+                                 </div-->
+                                    <label class="col-3 mt-3"><b>{{item.nombrefila}}</b></label>
+                                    <div [ngSwitch]="item.tipo" [class]="item.class">
+                                        <div *ngSwitchCase="'input'">
+                                            <mat-form-field class="col-12">
+                                                <mat-label>{{item.nombre}}</mat-label>
+                                                <input matInput #campo formControlName="{{item.id}}"
+                                                    (keypress)="item.keypress == true ? this.soloNumeros($event) : ''"
+                                                    maxlength="{{item.maxLength}}" autocomplete="off"
+                                                    (change)="item.change == true ? item.accion() : ''">
+                                                <mat-hint *ngIf="item.maxLength > 0" align="end">
+                                                    {{campo.value.length}}
+                                                    / {{item.maxLength}}
+                                                </mat-hint>
+                                            </mat-form-field>
+                                        </div>
+                                        <div *ngSwitchCase="'textarea'">
+                                            <mat-form-field class="col-ms-12 col-md-12 col-lg-12">
+                                                <mat-label>{{item.nombre}}</mat-label>
+                                                <textarea matInput #campo formControlName="{{item.id}}"
+                                                    maxlength="{{item.maxLength}}" autocomplete="off">
+                                             </textarea>
+                                                <mat-hint *ngIf="item.maxLength > 0" align="end">
+                                                    {{campo.value.length}}
+                                                    / {{item.maxLength}}
+                                                </mat-hint>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <!--Controles complementarios, se muestran en una misma fila-->
+                                    <div *ngIf="item.controlesComplemento" [class]="item.restclass" class="col">
+                                        <div *ngFor="let complement of item.controlesComplemento">
+                                            <div [ngSwitch]="complement.tipo" [class]="complement.class">
+                                                <div *ngSwitchCase="'input'">
+                                                    <mat-form-field class="col-12">
+                                                        <mat-label>{{complement.nombre}}</mat-label>
+                                                        <input matInput #campo formControlName="{{complement.id}}"
+                                                            maxlength="{{complement.maxLength}}" autocomplete="off"
+                                                            (change)="complement.change == true ? complement.accion() : ''">
+                                                        <mat-hint *ngIf="complement.maxLength > 0" align="end">
+                                                            {{campo.value.length}}
+                                                            / {{complement.maxLength}}
+                                                        </mat-hint>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div *ngSwitchCase="'date'">
+                                                    <mat-form-field>
+                                                        <mat-label>{{complement.nombre}}</mat-label>
+                                                        <input matInput #campo [matDatepicker]="pickerSecundary"
+                                                            formControlName="{{complement.id}}" readonly>
+                                                        <mat-datepicker-toggle matSuffix [for]="pickerSecundary">
+                                                            <mat-icon matDatepickerToggleIcon>date_range</mat-icon>
+                                                        </mat-datepicker-toggle>
+                                                        <mat-datepicker #pickerSecundary></mat-datepicker>
+                                                    </mat-form-field>
+                                                </div>
+                                                <div *ngSwitchCase="'textarea'">
+                                                    <mat-form-field class="col-ms-12 col-md-12 col-lg-12">
+                                                        <mat-label>{{complement.nombre}}</mat-label>
+                                                        <textarea matInput #campo formControlName="{{complement.id}}"
+                                                            class="tamañoTextArea" maxlength="{{complement.maxLength}}"
+                                                            autocomplete="off">
+                                                     </textarea>
+                                                        <mat-hint *ngIf="complement.maxLength > 0" align="end">
+                                                            {{campo.value.length}}
+                                                            / {{complement.maxLength}}
+                                                        </mat-hint>
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div *ngFor="let btn of botonesModalSecundario">
+                    <button mat-raised-button [class]="btn.class" (click)="btn.click()"
+                        [disabled]="btn.disabled && controlesSecundariosFormGroup.invalid">
+                        <mat-icon *ngIf="btn.icono">{{btn.icono}}</mat-icon>
+                        {{btn.nombre}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal ver detalle espera aprobacion-->
+<div class="modal fade bd-example-modal-xl" id="detalleEsperaAprobacion" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">Ver tracking de solicitud</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-4">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/esperar.gif" height="280px">
+                            </div>
+                            <h2 class="flexbox"><b>En espera de aprobacion</b></h2>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/creada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta creada</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/iniciado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta abierta</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/abierta.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje iniciado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/finalizado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje finalizado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/cerrada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta cerrada</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/confirmada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta confirmada</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-raised-button class="btn-container mt-2 ml-2" (click)="regresar()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--Modal ver detalle Cuenta creada-->
+<div class="modal fade bd-example-modal-xl" id="detalleCuentaCreada" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">Ver tracking de solicitud</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-1">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/esperar.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">En espera de aprobacion</h3>
+                        </div>
+                        <div class="col-4 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/creada.gif" height="280px">
+                            </div>
+                            <h2 class="flexbox"><b>Cuenta creada</b></h2>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/iniciado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta abierta</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/abierta.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje iniciado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/finalizado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje finalizado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/cerrada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta cerrada</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/confirmada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta confirmada</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-raised-button class="btn-container mt-2 ml-2" (click)="regresar()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal ver detalle Cuenta abierta-->
+<div class="modal fade bd-example-modal-xl" id="detalleCuentaAbierta" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">Ver tracking de solicitud</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-1">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/esperar.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">En espera de aprobacion</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/creada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta creada</h3>
+                        </div>
+                        <div class="col-4 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/iniciado.gif" height="280px">
+                            </div>
+                            <h2 class="flexbox"><b>Cuenta abierta</b></h2>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/abierta.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje iniciado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/finalizado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje finalizado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/cerrada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta cerrada</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/confirmada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta confirmada</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-raised-button class="btn-container mt-2 ml-2" (click)="regresar()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Modal ver detalle Pesaje Iniciado-->
+<div class="modal fade bd-example-modal-xl" id="detallePesajeIniciado" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">Ver tracking de solicitud</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-1">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/esperar.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">En espera de aprobacion</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/creada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta creada</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/iniciado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta abierta</h3>
+                        </div>
+                        <div class="col-4 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/abierta.gif" height="280px">
+                            </div>
+                            <h2 class="flexbox"><b>Pesaje iniciado</b></h2>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/finalizado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje finalizado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/cerrada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta cerrada</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/confirmada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta confirmada</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-raised-button class="btn-container mt-2 ml-2" (click)="regresar()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal ver detalle Cuenta Cerrada-->
+<div class="modal fade bd-example-modal-xl" id="detalleCuentaCerrada" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">Ver tracking de solicitud</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-1">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/esperar.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">En espera de aprobacion</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/creada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta creada</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/iniciado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta abierta</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/abierta.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje iniciado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/finalizado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje finalizado</h3>
+                        </div>
+                        <div class="col-4 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/cerrada.gif" height="280px">
+                            </div>
+                            <h2 class="flexbox"><b>Cuenta cerrada</b></h2>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/confirmada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta confirmada</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-raised-button class="btn-container mt-2 ml-2" (click)="regresar()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--Modal ver detalle Cuenta Confirmada-->
+<div class="modal fade bd-example-modal-xl" id="detalleCuentaConfirmada" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">Ver tracking de solicitud</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-1">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/esperar.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">En espera de aprobacion</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/creada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta creada</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/iniciado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta abierta</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/abierta.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje iniciado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/finalizado.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Pesaje finalizado</h3>
+                        </div>
+                        <div class="col-1 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/cerrada.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">Cuenta cerrada</h3>
+                        </div>
+                        <div class="col-4 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/confirmada.gif" height="280px">
+                            </div>
+                            <h2 class="flexbox"><b>Cuenta confirmada</b></h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-raised-button class="btn-container mt-2 ml-2" (click)="regresar()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--Modal ver Solicitud rechazada-->
+<div class="modal fade bd-example-modal-xl" id="detallaSolicitudRechazada" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">Ver tracking de solicitud</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-1">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/esperar.png" height="70px">
+                            </div>
+                            <h3 class="flexbox">En espera de aprobacion</h3>
+                        </div>
+                        <div class="col-4 ">
+                            <div class="centrarImg">
+                                <img src="../../../assets/img/rechazado.gif" height="280px">
+                            </div>
+                            <h2 class="flexbox"><b>Solicitud rechazada</b></h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-raised-button class="btn-container mt-2 ml-2" (click)="regresar()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--Modal ver Carnet transportista-->
+<div class="modal fade bd-example-modal-xl" id="verCarnetTransportista" tabindex="-1" role="dialog"
+    aria-labelledby="myLargeModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title col-12" id="exampleModalLabel">
+                    <div class="titulo top">
+                        <mat-card-title class="text-center m-2 titulo">Carnet transportista asignado</mat-card-title>
+                    </div>
+                </h5>
+                <!--button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button-->
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-3">
+                            <div class="centrarImg">
+                                <qrcode (qrCodeURL)="onChangeURL($event)" [qrdata]="myAngularxQrCode" [width]="256"
+                                [errorCorrectionLevel]="'M'"></qrcode>
+                            </div>
+                            <button mat-raised-button class="btn-container mt-1 ml-4 mb-2">
+                                <mat-icon>download</mat-icon>
+                                <a [href]="qrCodeDownloadLink" download="qrcode" style="color: white;">Descargar carnet</a>
+                            </button>
+                            
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button mat-raised-button class="btn-container mt-2 ml-2" (click)="regresar()">
+                        <mat-icon>arrow_back</mat-icon>
+                        Regresar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

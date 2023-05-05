@@ -1,0 +1,112 @@
+.iconOptions {
+    transform: scale(3); 
+    color: white; 
+    position: absolute;
+}
+
+.textOptions{
+    color: white; 
+    position: absolute;
+}
+
+.backgroundIcons {
+    background-color: #D1E8CF;
+    height: 50%;
+}
+
+.carousel-control-prev-icon { 
+    background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23009be1' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E"); 
+    width: 30px;
+    height: 48px;
+}
+.carousel-control-next-icon { 
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23009be1' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
+    width: 30px;
+    height: 48px;
+}
+
+label {
+    text-align: right;
+    display: block;
+    padding: 0.5em 1.5em 0.5em 0;
+}
+
+::ng-deep .cdk-overlay-container{
+    z-index: 1200 !important;
+}
+
+::ng-deep .mat-horizontal-stepper-header{
+    pointer-events: none !important;
+}
+
+::ng-deep #header .mat-checkbox-frame {
+    border-color: white !important;
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: black !important;
+    border-color: white !important;
+}
+
+::ng-deep .mat-checkbox-ripple .mat-ripple-element {
+    background-color: white !important;
+}
+
+::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: black !important;
+    border-color: white !important;
+}
+
+.example-table-container {
+    position: relative;
+    overflow: auto;
+}
+
+tr.example-detail-row {
+    height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+    background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+    background: #efefef;
+}
+
+.example-element-row td {
+    border-bottom-width: 0;
+}
+
+.example-element-detail {
+    overflow: hidden;
+    display: flex;
+}
+
+.example-element-diagram {
+    min-height: 80px;
+    font-weight: lighter;
+    margin: 8px 0;
+}
+
+.example-element-symbol {
+    font-weight: bold;
+    font-size: 40px;
+    line-height: normal;
+}
+
+.example-element-description {
+    padding: 16px;
+}
+
+.example-element-description-attribution {
+    opacity: 0.5;
+}
+.modal-body{
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.tamañoTextArea {
+    resize: vertical;
+}

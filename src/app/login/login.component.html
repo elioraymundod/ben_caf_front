@@ -1,0 +1,25 @@
+<div class="card-body">
+    
+    <mat-card class="margenArriba">
+        <mat-card-title class="titulo">Bienvenido al Sistema Beneficio del Cafe</mat-card-title>
+        <div class="m-0 row justify-content-center">
+            <form [formGroup]="datosFormGroup">
+                <div class="col-auto text-center">
+                    <mat-form-field>
+                        <mat-label>Nombre de Usuario</mat-label>
+                        <input matInput placeholder=""  formControlName="loginFormControl" autocomplete="off">
+                    </mat-form-field>
+                </div>
+                <div class="col-auto text-center">
+                    <mat-form-field >
+                        <mat-label>Contraseña</mat-label>
+                        <input matInput type="password" placeholder=""  formControlName="passFormControl">
+                    </mat-form-field>
+                </div>
+                <div class="col-auto text-center">
+                    <button mat-raised-button class="botones margenBotones" type="button" (click)="iniciarSesion(datosFormGroup.value)" [disabled]="datosFormGroup.invalid">Login</button>
+                </div>
+            </form>
+        </div>
+    </mat-card>
+</div>
