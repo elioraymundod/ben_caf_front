@@ -115,7 +115,7 @@ export class PesoCabalMainComponent implements OnInit {
         this.columnsChildrenIds = ['piloto', 'placa', 'pesoEnviado', 'accion']
         controles.push(
           {
-            tituloStep: 'Informacion nueva solicitud',
+            tituloStep: 'Informacion solicitudes parcialidades para ser pesadas',
             controles: [
             ],
           }
@@ -359,6 +359,21 @@ export class PesoCabalMainComponent implements OnInit {
       this.loginService.role = '',
         this.loginService.id = ''
     }, 800);
+  }
+
+  public soloNumerosConDecimales(event: any ) {
+    const key: any = event.keyCode || event.which;
+    const caracter = String.fromCharCode(key);
+
+    if (caracter.match('[0-9]') || (caracter === '.' && !this.botonesModalSecundario.get('peso')?.value.includes('.'))) {
+      //const parts = (value ?? '').split('.');
+      const parts = this.botonesModalSecundario.get('peso')?.value.split('.');
+      if (parts.length > 1)
+        return parts.pop().length < 2;
+      return true;
+    }
+
+    return false;
   }
 
   /* Metodo para validar numeros 
