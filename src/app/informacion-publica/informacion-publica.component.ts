@@ -11,6 +11,11 @@ import { LoginService } from '../Services/LoginService.service';
 export class InformacionPublicaComponent implements OnInit {
   licenciaTransportista: any;
   informacionPiloto: any;
+  public nombrePiloto = "";
+  public licenciaPiloto = "";
+  public numeroPiloto = "";
+  public correoPiloto = "";
+  public estadoPiloto = "";
 
   constructor(private route: ActivatedRoute, private spinner: NgxSpinnerService, private loginService: LoginService) { }
 
@@ -18,13 +23,16 @@ export class InformacionPublicaComponent implements OnInit {
     this.spinner.show();
     this.route.paramMap.subscribe(async params => {
       this.licenciaTransportista = params.get('transportista');
-      
+      console.log(this.licenciaTransportista)
       let consultaPiloto = {
-        "licencia": "https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/piloto"+this.licenciaTransportista
+        "licencia": this.licenciaTransportista
       }
       this.loginService.getPiloto(consultaPiloto).subscribe(res => {
-        this.informacionPiloto = res;
-        console.log(this.informacionPiloto)
+        this.nombrePiloto = res.nombre
+        this.correoPiloto = res.correo
+        this.numeroPiloto = res.celular
+        this.licenciaPiloto = res.licenciaPiloto
+        this.estadoPiloto = res.permitidoEnBeneficio === true ? "Transportista permitido" : "Transportista no permitido"
         this.spinner.hide()
       })
 

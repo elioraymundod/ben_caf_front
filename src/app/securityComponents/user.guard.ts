@@ -14,7 +14,6 @@ export class UserGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    if (environment.seguridad === true) {
       const token = localStorage.getItem('accessToken');
       const role = localStorage.getItem('role');
       if (!token) {
@@ -23,9 +22,5 @@ export class UserGuard implements CanActivate {
       } else {
         return true;
       }
-    } else {
-      return true
     }
-  }
-
 }

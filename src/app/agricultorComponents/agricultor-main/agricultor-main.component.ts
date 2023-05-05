@@ -62,10 +62,9 @@ export class AgricultorMainComponent implements OnInit {
   }
 
   descargarQr(datos: any){
-    this.myAngularxQrCode = datos.piloto;
+    this.myAngularxQrCode = `https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/datos.piloto`
     $('#opcionesGenerales').modal('hide');
     $('#verCarnetTransportista').modal('show');
-    console.log(datos)
   }
 
   ngOnInit(): void {
