@@ -66,7 +66,8 @@ export class AgricultorMainComponent implements OnInit {
     const nitPiloto = datos.piloto;
     const secretKey = 'beneficiocafeencrypted'
     const encriyptedParam = CryptoJS.AES.encrypt(nitPiloto, secretKey).toString();
-    this.myAngularxQrCode = `https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/${encriyptedParam}`
+    const parametroEncriptado = encriyptedParam.replace(/\//g, '_');
+    this.myAngularxQrCode = `https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/${parametroEncriptado}`
     $('#opcionesGenerales').modal('hide');
     $('#verCarnetTransportista').modal('show');
   }

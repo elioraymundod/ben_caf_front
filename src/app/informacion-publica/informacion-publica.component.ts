@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { LoginService } from '../Services/LoginService.service';
+import * as CryptoJS from 'crypto-js';
 
 @Component({
   selector: 'app-informacion-publica',
@@ -25,7 +26,8 @@ export class InformacionPublicaComponent implements OnInit {
     this.secretKey = 'beneficiocafeencrypted'
     this.route.paramMap.subscribe(async params => {
       let licencia = params.get('transportista');
-      const decryptedBytes = CryptoJS.AES.decrypt(String(licencia), this.secretKey);
+      const urlWithDiagonals = String(licencia).replace(/_/g, '/');
+      const decryptedBytes = CryptoJS.AES.decrypt(urlWithDiagonals, this.secretKey);
       const decryptedParam = decryptedBytes.toString(CryptoJS.enc.Utf8);
       this.licenciaTransportista = decryptedParam;
       console.log(this.licenciaTransportista)
