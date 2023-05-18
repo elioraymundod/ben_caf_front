@@ -10,6 +10,7 @@ import { LoginService } from 'src/app/Services/LoginService.service';
 import { SolicitudesService } from 'src/app/Services/SolicitudesService.service';
 import Swal from 'sweetalert2';
 declare let $: any;
+import * as CryptoJS from 'crypto-js';
 
 @Component({
   selector: 'app-agricultor-main',
@@ -62,7 +63,10 @@ export class AgricultorMainComponent implements OnInit {
   }
 
   descargarQr(datos: any){
-    this.myAngularxQrCode = `https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/${datos.piloto}`
+    const nitPiloto = datos.piloto;
+    const secretKey = 'beneficiocafeencrypted'
+    const encriyptedParam = CryptoJS.AES.encrypt(nitPiloto, secretKey).toString();
+    this.myAngularxQrCode = `https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/${encriyptedParam}`
     $('#opcionesGenerales').modal('hide');
     $('#verCarnetTransportista').modal('show');
   }

@@ -16,13 +16,18 @@ export class InformacionPublicaComponent implements OnInit {
   public numeroPiloto = "";
   public correoPiloto = "";
   public estadoPiloto = "";
+  secretKey = "";
 
   constructor(private route: ActivatedRoute, private spinner: NgxSpinnerService, private loginService: LoginService) { }
 
   ngOnInit(): void {
     this.spinner.show();
+    this.secretKey = 'beneficiocafeencrypted'
     this.route.paramMap.subscribe(async params => {
-      this.licenciaTransportista = params.get('transportista');
+      let licencia = params.get('transportista');
+      const decryptedBytes = CryptoJS.AES.decrypt(String(licencia), this.secretKey);
+      const decryptedParam = decryptedBytes.toString(CryptoJS.enc.Utf8);
+      this.licenciaTransportista = decryptedParam;
       console.log(this.licenciaTransportista)
       let consultaPiloto = {
         "licencia": this.licenciaTransportista

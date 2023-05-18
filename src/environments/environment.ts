@@ -5,8 +5,8 @@
 export const environment = {
   production: false,
   seguridad: true,
-  //baseUrl: 'http://localhost:8091/api/ben-caf/',
-  baseUrl: 'https://beneficio-cafe-ws.herokuapp.com/api/ben-caf/'
+  baseUrl: 'http://localhost:8091/api/ben-caf/',
+  //baseUrl: 'https://beneficio-cafe-ws.herokuapp.com/api/ben-caf/'
 };
 
 /*
