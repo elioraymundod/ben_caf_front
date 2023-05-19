@@ -62,14 +62,28 @@ export class AgricultorMainComponent implements OnInit {
     this.qrCodeDownloadLink = url;
   }
 
-  descargarQr(datos: any){
-    const nitPiloto = datos.piloto;
-    const secretKey = 'beneficiocafeencrypted'
-    const encriyptedParam = CryptoJS.AES.encrypt(nitPiloto, secretKey).toString();
-    const parametroEncriptado = encriyptedParam.replace(/\//g, '_');
-    this.myAngularxQrCode = `https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/${parametroEncriptado}`
-    $('#opcionesGenerales').modal('hide');
-    $('#verCarnetTransportista').modal('show');
+  descargarQr(datos: any) {
+    let consultaParcialidades = {
+      "solicitud": datos.idSolicitud
+    }
+    this.solicitudesService.consultarDisponibilidadParcialidades(consultaParcialidades).subscribe(res => {
+      console.log('el res es ', datos)
+      const nitPiloto = datos.piloto;
+      const noParcialidad = res.message;
+      const solicitud = datos.idSolicitud;
+
+      const secretKey = 'beneficiocafeencrypted'
+      const encriyptedParam = CryptoJS.AES.encrypt(nitPiloto, secretKey).toString();
+      /*const encriyptedNoParcialidad = CryptoJS.AES.encrypt(noParcialidad, secretKey).toString();*/
+
+      const parametroEncriptado = encriyptedParam.replace(/\//g, '_');
+      //const noParcialidadEncriptado = encriyptedNoParcialidad.replace(/\//g, '_');
+
+      this.myAngularxQrCode = `https://beneficio-cafe-front.herokuapp.com/consulta-beneficio-cafe/${solicitud}/${noParcialidad}/${parametroEncriptado}`
+      $('#opcionesGenerales').modal('hide');
+      $('#verCarnetTransportista').modal('show');
+      console.log(this.myAngularxQrCode)
+    })
   }
 
   ngOnInit(): void {
@@ -114,8 +128,8 @@ export class AgricultorMainComponent implements OnInit {
             tituloStep: 'Informacion nueva solicitud',
             controles: [
               {
-                id: 'descripcion', nombrefila: 'Descripción solicitud', formControl: new FormControl('', Validators.required), change: false,
-                tipo: 'input', nombre: 'Descripción de la solicitud', maxLength: 100, class: 'col-8', restclass: '', divider: true,
+                id: 'totalPesaje', nombrefila: 'Total del pesaje a enviar', formControl: new FormControl('', Validators.required), change: false, keypress: true,
+                tipo: 'input', nombre: 'Total del pesaje (En toneladas)', maxLength: 100, class: 'col-8', restclass: '', divider: true,
 
               },
               {
@@ -139,12 +153,12 @@ export class AgricultorMainComponent implements OnInit {
 
       case 'verSolicitudes':
         this.spinner.show();
-        this.columnsToDisplay = [{ id: 'descripcion', displayName: 'Descripción' }, { id: 'noCuenta', displayName: 'No. Cuenta' }, { id: 'estado', displayName: 'Estado solicitud' },
+        this.columnsToDisplay = [{ id: 'totalPesaje', displayName: 'Total pesaje solicitado' }, { id: 'noCuenta', displayName: 'No. Cuenta' }, { id: 'estado', displayName: 'Estado solicitud' },
         {
           id: 'accion', displayName: 'Acción', icono: 'remove_red_eye', titleAccion: 'Ver tracking', accion: (element: any) => this.verTracking(element),
           secondIcon: 'local_shipping', secondTitleAccion: 'Enviar parcialidad', secondAccion: (element: any) => this.ingresarParcialidad(element)
         }]
-        this.columnsChildrenIds = ['descripcion', 'noCuenta', 'estado', 'accion']
+        this.columnsChildrenIds = ['totalPesaje', 'noCuenta', 'estado', 'accion']
         controles.push(
           {
             tituloStep: 'Visualizacion solicitudes creadas',
@@ -195,7 +209,6 @@ export class AgricultorMainComponent implements OnInit {
   }
 
   ingresarParcialidad(parcialidad: any) {
-    console.log(parcialidad)
     this.spinner.show();
     this.tituloModalSecundario = 'Ingreso de parcialidades'
     let botones: any = [];
@@ -214,7 +227,7 @@ export class AgricultorMainComponent implements OnInit {
         },
         {
           id: 'peso', nombrefila: 'Peso enviado', formControl: new FormControl({ value: '', disabled: false }, Validators.required),
-          tipo: 'input', nombre: 'Peso de la parcialidad a enviar (medida en toneladas)', class: 'col-5', restclass: '3', maxLength: 3, keypress: true,
+          tipo: 'input', nombre: 'Peso de la parcialidad a enviar (medida en toneladas)', class: 'col-5', restclass: '4', maxLength: 4, keypress: true,
           controlesComplemento: [{ id: 'noParcialidad', formControl: new FormControl({ value: '', disabled: true }), tipo: 'input', nombre: 'Número de parcialidad', class: 'col-12' }]
         },
       )
@@ -256,81 +269,101 @@ export class AgricultorMainComponent implements OnInit {
   }
 
   enviarParcialidad(parcialidad: any) {
-    this.spinner.show()
-    let nuevaParcialidad = {
-      "solicitud": parcialidad.idSolicitud,
-      "pesoEnviado": Number(this.controlesSecundariosFormGroup.get('peso')?.value),
-      "placa": parcialidad.placa,
-      "piloto": parcialidad.piloto,
-      "usuarioCreacion": this.idUsuario
+    this.spinner.show();
+    let solicitudConsulta = {
+      "solicitud": parcialidad.idSolicitud
     }
-
-    this.solicitudesService.crearParcialidad(nuevaParcialidad).subscribe(res => {
-      let nuevoEstado = {
-        "solicitud": parcialidad.idSolicitud,
-        "nuevoEstado": "55891e4a-ea98-11ed-a05b-0242ac120003",
-        "usuarioModificacion": this.idUsuario,
-        "fechaModificacion": new Date()
-      }
-
-      let noParcialidad = Number(this.controlesSecundariosFormGroup.get('noParcialidad')?.value)
-      if (noParcialidad === 1) {
-
-        // Cambiar estado de solicitud a Cuenta Abierta
-        this.solicitudesService.actualizarSolicitudAgricultor(nuevoEstado).subscribe(res => {
-          Swal.fire(
-            'Parcialidad enviada',
-            'Se envió la parcialidad con éxito al Beneficio del Café',
-            'success'
-          )
-          this.spinner.hide();
-
-          $('#modalSecundary').modal('hide');
-          $('#opcionesGenerales').modal('hide');
-          this.cleanForm();
-        }, err => {
-          this.spinner.hide();
-          Swal.fire(
-            'Error',
-            'No fue posible realizar lo solicitado, por favor intentente en otro momento',
-            'error'
-          )
-        })
-
-        // Cambiar estado de cuenta a Cuenta Abierta
-        let nuevoEstadoCuenta = {
-          "idCuenta": parcialidad.idCuenta,
-          "nuevoEstado": "55891e4a-ea98-11ed-a05b-0242ac120003",
-          "usuarioModificacion": this.idUsuario
-        }
-        this.cuentasService.actualizarCuenta(nuevoEstadoCuenta).subscribe(res => {
-          this.spinner.hide()
-        }, err => {
-          this.spinner.hide()
-          Swal.fire(
-            'Error',
-            'No fue posible realizar lo solicitado, por favor intentente en otro momento',
-            'error'
-          )
-        })
-      } else {
+    this.solicitudesService.consultarPesajeEnviado(solicitudConsulta).subscribe(res => {
+      let pesajeDisponible = Number(parcialidad.totalPesaje) - Number(res.message);
+      if (Number(this.controlesSecundariosFormGroup.get('peso')?.value > pesajeDisponible)) {
+        let complemento;
+        Number(res.message) === 0 ? complemento = 'la cantidad indicada en la solicitud es ' + parcialidad.totalPesaje + ' toneladas' :
+          complemento = 'usted ya ha enviado parcialidades y solo quedan disponibles ' + pesajeDisponible + ' toneladas para enviar.'
         Swal.fire(
-          'Parcialidad enviada',
-          'Se envió la parcialidad con éxito al Beneficio del Café',
-          'success'
+          'Error',
+          `No es posible enviar este peso, porque ${complemento}`,
+          'error'
         )
         this.spinner.hide();
+        return;
+      } else {
+        let nuevaParcialidad = {
+          "solicitud": parcialidad.idSolicitud,
+          "pesoEnviado": Number(this.controlesSecundariosFormGroup.get('peso')?.value),
+          "placa": parcialidad.placa,
+          "piloto": parcialidad.piloto,
+          "usuarioCreacion": this.idUsuario
+        }
 
-        $('#modalSecundary').modal('hide');
-        $('#opcionesGenerales').modal('hide');
+        this.solicitudesService.crearParcialidad(nuevaParcialidad).subscribe(res => {
+          let nuevoEstado = {
+            "solicitud": parcialidad.idSolicitud,
+            "nuevoEstado": "55891e4a-ea98-11ed-a05b-0242ac120003",
+            "usuarioModificacion": this.idUsuario,
+            "fechaModificacion": new Date()
+          }
+
+          let noParcialidad = Number(this.controlesSecundariosFormGroup.get('noParcialidad')?.value)
+          if (noParcialidad === 1) {
+
+            // Cambiar estado de solicitud a Cuenta Abierta
+            this.solicitudesService.actualizarSolicitudAgricultor(nuevoEstado).subscribe(res => {
+              Swal.fire(
+                'Parcialidad enviada',
+                'Se envió la parcialidad con éxito al Beneficio del Café',
+                'success'
+              )
+              this.spinner.hide();
+
+              $('#modalSecundary').modal('hide');
+              $('#opcionesGenerales').modal('hide');
+              this.cleanForm();
+            }, err => {
+              this.spinner.hide();
+              Swal.fire(
+                'Error',
+                'No fue posible realizar lo solicitado, por favor intentente en otro momento',
+                'error'
+              )
+            })
+
+            // Cambiar estado de cuenta a Cuenta Abierta
+            let nuevoEstadoCuenta = {
+              "idCuenta": parcialidad.idCuenta,
+              "nuevoEstado": "55891e4a-ea98-11ed-a05b-0242ac120003",
+              "usuarioModificacion": this.idUsuario
+            }
+            this.cuentasService.actualizarCuenta(nuevoEstadoCuenta).subscribe(res => {
+              this.spinner.hide()
+            }, err => {
+              this.spinner.hide()
+              Swal.fire(
+                'Error',
+                'No fue posible realizar lo solicitado, por favor intentente en otro momento',
+                'error'
+              )
+            })
+          } else {
+            Swal.fire(
+              'Parcialidad enviada',
+              'Se envió la parcialidad con éxito al Beneficio del Café',
+              'success'
+            )
+            this.spinner.hide();
+
+            $('#modalSecundary').modal('hide');
+            $('#opcionesGenerales').modal('hide');
+          }
+        }, err => {
+          this.spinner.hide();
+          Swal.fire(
+            'Error',
+            'No fue posible realizar lo solicitado, por favor intentente en otro momento',
+            'error'
+          )
+        })
+
       }
-    }, err => {
-      this.spinner.hide();
-      Swal.fire(
-        'Error',
-        'No fue posible realizar lo solicitado, por favor intentente en otro momento',
-        'error'
-      )
     })
   }
 
@@ -390,14 +423,14 @@ export class AgricultorMainComponent implements OnInit {
       case 'Solicitud rechazada':
         $('#opcionesGenerales').modal('hide');
         $('#detallaSolicitudRechazada').modal('show');
-      break;
+        break;
     }
   }
 
   crearSolicitud() {
     this.spinner.show();
     const nuevaSolicitud = {
-      "descripcion": this.controlesFormGroup.get('descripcion')?.value,
+      "totalPesaje": this.controlesFormGroup.get('totalPesaje')?.value,
       "estadoSolicitiud": "58ec8186-e3fd-11ed-b5ea-0242ac120002",
       "placa": this.controlesFormGroup.get('placa')?.value,
       "cantidadParcialidades": this.controlesFormGroup.get('parcialidades')?.value,

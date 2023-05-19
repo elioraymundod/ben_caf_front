@@ -49,4 +49,13 @@ export class LoginService {
         return this.http.post(`${this.baseUrl}users/piloto`, piloto)
     }
 
+    
+    public obtenerValidezQR(solicitud: any): Observable<any> {
+        return this.http.post(`${this.baseUrl}users/qrvalido`, solicitud)
+    }
+
+    public escanearQR(solicitud: any): Observable<any> {
+        return this.http.put(`${this.baseUrl}users/escanearqr`, solicitud)
+    }
+
 }

@@ -75,6 +75,11 @@ export class SolicitudesService {
         return this.http.post(`${this.baseUrl}parcialidades/cantidad`, solicitud, this.options)
     }
 
+    public consultarPesajeEnviado(solicitud: any): Observable<any> {
+        this.createHeader()
+        return this.http.post(`${this.baseUrl}parcialidades/totalPesaje`, solicitud, this.options)
+    }
+
     public crearParcialidad(parcialidad: any): Observable<any> {
         this.createHeader()
         return this.http.post(`${this.baseUrl}parcialidades/create`, parcialidad, this.options)
@@ -99,6 +104,9 @@ export class SolicitudesService {
         this.createHeader()
         return this.http.post(`${this.baseUrl}rechazos/create`, rechazo, this.options)
     }
+
+
+
 
         
 }

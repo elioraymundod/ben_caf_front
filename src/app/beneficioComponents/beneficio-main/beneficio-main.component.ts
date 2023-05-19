@@ -94,9 +94,9 @@ export class BeneficioMainComponent implements OnInit {
     switch (accion) {
       case 'solicitudesPendientes':
         this.showTable = true;
-        this.columnsToDisplay = [{ id: 'descripcion', displayName: 'Descripción' }, { id: 'placa', displayName: 'Placa transporte' }, { id: 'piloto', displayName: 'Licencia piloto' },
+        this.columnsToDisplay = [{ id: 'totalPesaje', displayName: 'Total pesaje solicitado' }, { id: 'placa', displayName: 'Placa transporte' }, { id: 'piloto', displayName: 'Licencia piloto' },
         { id: 'accion', displayName: 'Acción', icono: 'remove_red_eye', titleAccion: 'Validar estado', accion: (element: any) => this.validarEstado(element) }]
-        this.columnsChildrenIds = ['descripcion', 'placa', 'piloto', 'accion']
+        this.columnsChildrenIds = ['totalPesaje', 'placa', 'piloto', 'accion']
 
         controles.push(
           {
@@ -122,9 +122,9 @@ export class BeneficioMainComponent implements OnInit {
 
       case 'solicitudesConfirmar':
         this.showTable = true;
-        this.columnsToDisplay = [{ id: 'descripcion', displayName: 'Descripción' }, { id: 'placa', displayName: 'Placa transporte' }, { id: 'piloto', displayName: 'Licencia piloto' },
+        this.columnsToDisplay = [{ id: 'totalPesaje', displayName: 'Total pesaje solicitado' }, { id: 'placa', displayName: 'Placa transporte' }, { id: 'piloto', displayName: 'Licencia piloto' },
         { id: 'accion', displayName: 'Acción', icono: 'remove_red_eye', titleAccion: 'Validar estado', accion: (element: any) => this.validarConfirmacionSolicitud(element) }]
-        this.columnsChildrenIds = ['descripcion', 'placa', 'piloto', 'accion']
+        this.columnsChildrenIds = ['totalPesaje', 'placa', 'piloto', 'accion']
 
         controles.push(
           {

@@ -186,7 +186,7 @@
                                                     style="cursor: pointer;" (click)="column.secondAccion(element)"
                                                     *ngIf="(element.estado === 'Cuenta creada' || element.estado === 'Pesaje iniciado' || element.estado === 'Cuenta abierta') && element.parcialidadesCompletas === true">{{column.secondIcon}}</span>
 
-                                                <span class="material-icons" title="Descargar Carnet Transportista"
+                                                <span class="material-icons" title="Descargar Carnet Transportista" *ngIf="(element.estado !== 'Cuenta confirmada') && (element.estado !== 'En espera de aprobacion') && (element.estado !== 'Cuenta creada')"
                                                     style="cursor: pointer;"
                                                     (click)="descargarQr(element)">person_pin</span>
                                             </td>

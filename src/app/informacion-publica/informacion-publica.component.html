@@ -3,10 +3,20 @@
         <mat-card-title class="text-center m-2 encabezado">Consulta de Transportista</mat-card-title>
     </div>
 
-    <div class="carousel-inner" data-interval="false">
+    <div class="carousel-inner" data-interval="false" *ngIf="!showInfo">
         <div class="carousel-item active">
             <mat-card class="mt-5 backgroundIcons">
                 <div class="row d-flex justify-content-center">
+                    <mat-card
+                        class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
+                        style="cursor: pointer">
+                        <mat-icon class="iconOptions mt-3">format_list_numbered</mat-icon>
+                        <mat-card-title class="text-center tituloCampo textOptions"
+                            style="margin-top: 80px">No. parcialidad enviada</mat-card-title>
+                        <mat-card-title class="text-center enlaces textOptions"
+                            style="margin-top: 105px">{{noParcialidad}}</mat-card-title>
+                    </mat-card>
+
                     <mat-card
                         class="col-lg-2 col-md-4 col-sm-4 ml-5 mr-4 mb-3 mt-5 colorSecundario heightOptions d-flex justify-content-center"
                         style="cursor: pointer">

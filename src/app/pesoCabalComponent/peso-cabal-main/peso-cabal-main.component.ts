@@ -12,6 +12,9 @@ import { SolicitudesService } from 'src/app/Services/SolicitudesService.service'
 import Swal from 'sweetalert2';
 declare let $: any;
 //import * as QRCode from 'qrcode';
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-peso-cabal-main',
@@ -34,7 +37,7 @@ export class PesoCabalMainComponent implements OnInit {
   botonesModalSecundario: any = [];
   showTable = false;
   idUsuario: any;
- 
+
 
 
   @ViewChild(MatPaginator, { static: false })
@@ -51,14 +54,14 @@ export class PesoCabalMainComponent implements OnInit {
         opciones:
           [
             { nombre: 'Camiones por pesar', descripcion: 'Camiones en espera de ser pesados', icono: 'play_for_work', accion: 'solicitudesPendientes' },
-           // { nombre: 'Imprimir QR', descripcion: 'Generar QR', icono: 'play_for_work', accion: 'generarQr' },
+            // { nombre: 'Imprimir QR', descripcion: 'Generar QR', icono: 'play_for_work', accion: 'generarQr' },
             { nombre: 'Cerrar sesión', descripcion: 'Cerrar sesión', icono: 'power_settings_new', accion: 'cerrarSesion' },
           ]
       }
     )
     this.opcionesMenu = opciones;
   }
-  
+
 
   ngOnInit(): void {
     this.spinner.show();
@@ -82,8 +85,8 @@ export class PesoCabalMainComponent implements OnInit {
         break;
 
       case 'generarQr':
-      this.generarQr();
-      break;
+        this.generarQr();
+        break;
     }
     this.generarControles(accion);
   }
@@ -183,6 +186,48 @@ export class PesoCabalMainComponent implements OnInit {
     $('#opcionesGenerales').modal('hide');
     $('#modalSecundary').modal('show');
     this.spinner.hide()
+  }
+
+  createPdf(data: any) {
+    const imagen = '/img/abierta.png'
+    const pdfDefinition: any = {
+      content: [
+        {
+          text: 'CONSTANCIA DE INGRESO DE PESAJE DE PARCIALIDAD',
+          style: 'header',
+          alignment: 'center',
+          bold: true
+        },
+        {
+          text: 'Empresa Peso Cabal',
+          style: 'header',
+          alignment: 'center',
+          bold: false
+        },
+        {
+          text: [
+            `\n\n\nPlaca del transporte que trajo la parcialidad: ${data.placa}\n\n`,
+            `Número de licencia del transportista: ${data.piloto}\n\n`,
+            `Peso enviado por la unidad solicitante: ${data.pesoEnviado} toneladas\n\n`,
+            `Peso registrado por la empresa Peso Cabal: ${this.controlesSecundariosFormGroup.get('peso')?.value} toneladas\n\n`,
+          ],
+          style: 'header',
+          bold: false
+        },
+        {
+          text: 'Gracias por usar nuestros sistemas',
+          style: 'footer',
+          alignment: 'right',
+          bold: false
+        },
+      ],
+      images: {
+        mySuperImage: 'data:image/png;base64,...content...'
+      }
+    }
+
+    const pdf = pdfMake.createPdf(pdfDefinition);
+    pdf.download('Reporte pesocabal')
   }
 
   guardarIngresoPeso(peso: any) {
@@ -313,6 +358,7 @@ export class PesoCabalMainComponent implements OnInit {
       )
       this.spinner.hide();
     })
+    this.createPdf(peso);
   }
 
   regresar() {
@@ -339,7 +385,7 @@ export class PesoCabalMainComponent implements OnInit {
     });
 
     this.controlesSecundariosFormGroup.updateValueAndValidity();
-    
+
     this.controlesFormGroup.updateValueAndValidity();
     this.controles = [];
     this.botonesFooter = [];
@@ -361,7 +407,7 @@ export class PesoCabalMainComponent implements OnInit {
     }, 800);
   }
 
-  public soloNumerosConDecimales(event: any ) {
+  public soloNumerosConDecimales(event: any) {
     const key: any = event.keyCode || event.which;
     const caracter = String.fromCharCode(key);
 

@@ -13,7 +13,7 @@ const routes: Routes = [
   {path: 'agricultor-main', component: AgricultorMainComponent, canActivate: [UserGuard]},
   {path: 'beneficio-main', component: BeneficioMainComponent, canActivate: [UserGuard]},
   {path: 'peso-cabal-main', component: PesoCabalMainComponent, canActivate: [UserGuard]},
-  {path: 'consulta-beneficio-cafe/:transportista', component: InformacionPublicaComponent},
+  {path: 'consulta-beneficio-cafe/:solicitud/:noParcialidad/:transportista', component: InformacionPublicaComponent},
   {path: '**', component: LoginComponent},
 ];
 
