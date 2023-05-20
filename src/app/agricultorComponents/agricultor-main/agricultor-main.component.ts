@@ -303,6 +303,10 @@ export class AgricultorMainComponent implements OnInit {
             "fechaModificacion": new Date()
           }
 
+          
+
+          console.log('el res al guardar es ',res.code)
+
           let noParcialidad = Number(this.controlesSecundariosFormGroup.get('noParcialidad')?.value)
           if (noParcialidad === 1) {
 
@@ -439,7 +443,19 @@ export class AgricultorMainComponent implements OnInit {
       "fechaCreacion": new Date()
     }
 
+    
+
     this.solicitudesService.crearsolicitud(nuevaSolicitud).subscribe(solicitud => {
+      if (solicitud.code === 409) {
+        Swal.fire(
+          'Piloto asignado a una cuenta',
+          'El piloto que intentas asignar esta asignado a una cuenta',
+          'info'
+        )
+        this.spinner.hide();
+        return;
+      }
+
       $('#opcionesGenerales').modal('hide');
       this.cleanForm();
       Swal.fire(
