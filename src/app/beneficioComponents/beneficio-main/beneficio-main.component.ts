@@ -357,6 +357,8 @@ export class BeneficioMainComponent implements OnInit {
     });
     
 
+    
+
     /*Width columns primera hoja dele excel*/
     worksheet.columns[0].width = 35;
     worksheet.columns[1].width = 35;
