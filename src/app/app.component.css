@@ -3,6 +3,9 @@
     color: white;
     text-align: left;
     font-size: 14px;
+    max-width: 100px;
+    margin-left: 5px;
+    
 }
 
 table {
@@ -10,3 +13,16 @@ table {
     margin: auto;
     width: 100%;
 }
+
+table#space {
+    border-collapse: separate;
+    border-spacing: 10px 5px;
+  }
+
+  th.header-cell {
+    border-right: 1px solid black; /* Establece un borde derecho en las celdas de encabezado */
+  }
+
+  th.header-cell {
+    max-width: 200px; /* Establece una anchura máxima de 200 píxeles para las celdas de encabezado */
+  }

@@ -105,8 +105,18 @@ export class SolicitudesService {
         return this.http.post(`${this.baseUrl}rechazos/create`, rechazo, this.options)
     }
 
+    public getBestClients(): Observable<any> {
+        this.createHeader()
+        return this.http.post(`${this.baseUrl}solicitud/best/clients`, null, this.options)
+    }
 
+    public getClientesWithSobrantesFaltantes(): Observable<any> {
+        this.createHeader()
+        return this.http.post(`${this.baseUrl}solicitud/clients/faltantes/sobrantes`, null, this.options)
+    }
 
-
-        
+    public getPesajesbyFechas(fechas: any): Observable<any> {
+        this.createHeader()
+        return this.http.post(`${this.baseUrl}pesos/fechas`, fechas, this.options)
+    }
 }

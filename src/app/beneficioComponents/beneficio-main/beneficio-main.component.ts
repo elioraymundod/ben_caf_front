@@ -9,6 +9,9 @@ import { LoginService } from 'src/app/Services/LoginService.service';
 import { SolicitudesService } from 'src/app/Services/SolicitudesService.service';
 import Swal from 'sweetalert2';
 declare let $: any;
+import * as moment from 'moment';
+import { Workbook } from 'exceljs';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-beneficio-main',
@@ -35,6 +38,14 @@ export class BeneficioMainComponent implements OnInit {
   complementoSolicitudValida = '';
   solicitud = ''
   faltanteSobrante = ''
+  totalPesoSobranteFaltante: any;
+  sinPesajes: boolean = true;
+  totalPesajes: any;
+
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
 
   @ViewChild(MatPaginator, { static: false })
   paginator!: MatPaginator;
@@ -51,6 +62,9 @@ export class BeneficioMainComponent implements OnInit {
           [
             { nombre: 'Solicitudes ingresadas', descripcion: 'Solicitudes pendientes de aprobar', icono: 'check_box', accion: 'solicitudesPendientes' },
             { nombre: 'Confirmar solicitudes', descripcion: 'Solicitudes pendientes de confirmar', icono: 'done_all', accion: 'solicitudesConfirmar' },
+            { nombre: 'Consulta pesajes', descripcion: 'Consulta de Pesos Ingresados por fechas', icono: 'reorder', accion: 'reportePesajeFechas' },
+            { nombre: 'Reporte mejor cliente', descripcion: 'Reporte del mejor cliente', icono: 'supervised_user_circle', accion: 'reporteClientes' },
+            { nombre: 'Reporte Anexos', descripcion: 'Reporte de agricultores con Sobrantes y Faltantes', icono: 'swap_vert', accion: 'reporteAnexos' },
             { nombre: 'Cerrar sesión', descripcion: 'Cerrar sesión', icono: 'power_settings_new', accion: 'cerrarSesion' },
           ]
       }
@@ -76,8 +90,23 @@ export class BeneficioMainComponent implements OnInit {
         $('#opcionesGenerales').modal('show');
         break;
 
+      case 'reporteAnexos':
+        this.tituloFormulario = 'Reporte de clientes con Sobrantes y Faltantes'
+        $('#opcionesGenerales').modal('show');
+        break;
+
+      case 'reportePesajeFechas':
+        this.tituloFormulario = 'Reporte de Pesajes ingresados por Fechas'
+        $('#opcionesGenerales').modal('show');
+        break;
+
       case 'solicitudesConfirmar':
         this.tituloFormulario = 'Revisión de solicitudes pendientes de confirmar'
+        $('#opcionesGenerales').modal('show');
+        break;
+
+      case 'reporteClientes':
+        this.tituloFormulario = 'Reporte del mejor cliente'
         $('#opcionesGenerales').modal('show');
         break;
 
@@ -89,9 +118,72 @@ export class BeneficioMainComponent implements OnInit {
   }
 
   generarControles(accion: any) {
+    this.spinner.show();
     let controles = []
     let botonesFooter = []
     switch (accion) {
+      case 'reportePesajeFechas':
+        controles.push(
+          {
+            tituloStep: 'Filtro de búsqueda',
+            controles: [
+              {
+                id: 'fechas', nombrefila: '', formControl: new FormControl('', Validators.required), change: false, keypress: true,
+                tipo: 'datepicker', nombre: 'Fechas a consultar', maxLength: 100, class: 'col-5', restclass: '', divider: true,
+
+              },
+            ],
+          }
+        )
+        const fechas = {
+          "fechaInicio": "",
+          "fechaFin": ""
+        }
+
+        this.botonesSecundarios.push(
+          { nombre: 'Buscar', class: 'botonesStepper', icono: 'search', click: () => this.buscarPesosByFechas() },
+        )
+
+        botonesFooter.push(
+          { nombre: 'Cerrar', class: 'btn-container mt-2', click: () => this.cleanForm(), disable: false },
+        )
+        this.spinner.hide();
+        break;
+
+      case 'reporteClientes':
+        this.columnsToDisplay = [{ id: 'username', displayName: 'Nombre de Usuario del cliente' }, { id: 'totalPesaje', displayName: 'Total pesaje registrado' }, { id: 'totalSolicitudes', displayName: 'Total de solicitudes creadas' }]
+        this.columnsChildrenIds = ['username', 'totalPesaje', 'totalSolicitudes']
+
+        this.solicitudesService.getBestClients().subscribe(res => {
+          this.showTable = true;
+          this.dataSource.data = res.data;
+          setTimeout(() => this.dataSource.paginator = this.paginator);
+          this.spinner.hide()
+        })
+
+        botonesFooter.push(
+          { nombre: 'Imprimir Excel', class: 'btn-container mt-2', click: () => this.generarReporteBestClient(), disable: false },
+          { nombre: 'Cerrar', class: 'btn-container mt-2', click: () => this.cleanForm(), disable: false },
+        )
+        break;
+
+      case 'reporteAnexos':
+        this.columnsToDisplay = [{ id: 'cuenta', displayName: 'No. Cuenta' }, { id: 'agricultor', displayName: 'Usuario cliente' }, { id: 'peso', displayName: 'Total Peso' }, { id: 'sobranteFaltante', displayName: 'Sobrante / Faltante' }, { id: 'observaciones', displayName: 'Observaciones anexo' }]
+        this.columnsChildrenIds = ['cuenta', 'agricultor', 'peso', 'sobranteFaltante', 'observaciones']
+
+        this.solicitudesService.getClientesWithSobrantesFaltantes().subscribe(res => {
+          this.showTable = true;
+          this.dataSource.data = res.data;
+          setTimeout(() => this.dataSource.paginator = this.paginator);
+          this.spinner.hide()
+        })
+
+        botonesFooter.push(
+          { nombre: 'Imprimir Excel', class: 'btn-container mt-2', click: () => this.generarReporteAnexos(), disable: false },
+          { nombre: 'Cerrar', class: 'btn-container mt-2', click: () => this.cleanForm(), disable: false },
+        )
+        break;
+
       case 'solicitudesPendientes':
         this.showTable = true;
         this.columnsToDisplay = [{ id: 'totalPesaje', displayName: 'Total pesaje solicitado' }, { id: 'placa', displayName: 'Placa transporte' }, { id: 'piloto', displayName: 'Licencia piloto' },
@@ -118,6 +210,7 @@ export class BeneficioMainComponent implements OnInit {
         botonesFooter.push(
           { nombre: 'Cerrar', class: 'btn-container mt-2', click: () => this.cleanForm(), disable: false },
         )
+        this.spinner.hide()
         break;
 
       case 'solicitudesConfirmar':
@@ -146,6 +239,7 @@ export class BeneficioMainComponent implements OnInit {
         botonesFooter.push(
           { nombre: 'Cerrar', class: 'btn-container mt-2', click: () => this.cleanForm(), disable: false },
         )
+        this.spinner.hide()
         break;
     }
     this.controles = controles;
@@ -161,6 +255,171 @@ export class BeneficioMainComponent implements OnInit {
       })
     })
     this.controlesFormGroup.updateValueAndValidity();
+  }
+
+  generarReporteBestClient() {
+    let workbook = new Workbook();
+    let worksheet = workbook.addWorksheet('Reporte');
+    var currentLine = 1;
+    // Headers primera hoja del excel
+    let headersReportes = [];
+
+    worksheet.getRow(currentLine).getCell(1).value = 'Usuario del cliente';
+    headersReportes.push('A' + currentLine);
+    worksheet.getRow(currentLine).getCell(2).value = 'Total pesaje registrado';
+    headersReportes.push('B' + currentLine);
+    worksheet.getRow(currentLine).getCell(3).value = 'Total solicitudes creadas';
+    headersReportes.push('C' + currentLine);
+
+    currentLine++;
+    console.log('el datasource es ', this.dataSource.data)
+
+    this.dataSource.data.forEach((dataRow: any) => {
+      console.log('el datarow es', dataRow)
+      worksheet.getRow(currentLine).getCell(1).value = dataRow.username;
+      worksheet.getRow(currentLine).getCell(2).value = dataRow.totalPesaje;
+      worksheet.getRow(currentLine).getCell(3).value = dataRow.totalSolicitudes;
+      currentLine++;
+    });
+
+    /*Width columns primera hoja dele excel*/
+    worksheet.columns[0].width = 35;
+    worksheet.columns[1].width = 35;
+    worksheet.columns[2].width = 35;
+
+    headersReportes.map((key) => {
+      worksheet.getCell(key).font = {
+        name: 'Arial',
+        size: 14,
+        family: 2,
+        bold: true,
+      };
+    });
+
+    headersReportes.map((key) => {
+      worksheet.getCell(key).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '92D16B' },
+        bgColor: { argb: '92D16B' },
+      };
+    });
+
+    worksheet.eachRow({ includeEmpty: true }, function (row, rowNumber) {
+      row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      });
+    });
+
+    //Descargar
+    workbook.xlsx.writeBuffer().then((json) => {
+      let blob = new Blob([json], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      FileSaver.saveAs(blob, "Reporte mejor cliente" + '.xlsx');
+    });
+  }
+
+  generarReporteAnexos() {
+    let workbook = new Workbook();
+    let worksheet = workbook.addWorksheet('Reporte');
+    var currentLine = 1;
+    // Headers primera hoja del excel
+    let headersReportes = [];
+
+    worksheet.getRow(currentLine).getCell(1).value = 'No. Cuenta';
+    headersReportes.push('A' + currentLine);
+    worksheet.getRow(currentLine).getCell(2).value = 'Usuario del cliente';
+    headersReportes.push('B' + currentLine);
+    worksheet.getRow(currentLine).getCell(3).value = 'Total peso';
+    headersReportes.push('C' + currentLine);
+    worksheet.getRow(currentLine).getCell(4).value = 'Sobrante/Faltante';
+    headersReportes.push('D' + currentLine);
+    worksheet.getRow(currentLine).getCell(5).value = 'Observaciones anexo';
+    headersReportes.push('E' + currentLine);
+
+    currentLine++;
+
+    this.dataSource.data.forEach((dataRow: any) => {
+      console.log('el datarow es', dataRow)
+      worksheet.getRow(currentLine).getCell(1).value = dataRow.cuenta;
+      worksheet.getRow(currentLine).getCell(2).value = dataRow.agricultor;
+      worksheet.getRow(currentLine).getCell(3).value = dataRow.peso;
+      worksheet.getRow(currentLine).getCell(4).value = dataRow.sobranteFaltante;
+      worksheet.getRow(currentLine).getCell(5).value = dataRow.observaciones;
+      worksheet.getRow(currentLine).getCell(5).alignment = { wrapText: true };
+      currentLine++;
+    });
+    
+
+    /*Width columns primera hoja dele excel*/
+    worksheet.columns[0].width = 35;
+    worksheet.columns[1].width = 35;
+    worksheet.columns[2].width = 35;
+    worksheet.columns[3].width = 35;
+    worksheet.columns[4].width = 35;
+
+    headersReportes.map((key) => {
+      worksheet.getCell(key).font = {
+        name: 'Arial',
+        size: 14,
+        family: 2,
+        bold: true,
+      };
+    });
+
+    headersReportes.map((key) => {
+      worksheet.getCell(key).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '92D16B' },
+        bgColor: { argb: '92D16B' },
+      };
+    });
+
+    worksheet.eachRow({ includeEmpty: true }, function (row, rowNumber) {
+      row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      });
+    });
+
+    //Descargar
+    workbook.xlsx.writeBuffer().then((json) => {
+      let blob = new Blob([json], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      FileSaver.saveAs(blob, "Reporte Anexos" + '.xlsx');
+    });
+  }
+
+  buscarPesosByFechas() {
+    this.spinner.show();
+    let consultaFechas = {
+      "fechaInicio": moment(this.range.get('start')?.value).format('DD-MM-YYYY'),
+      "fechaFin": moment(this.range.get('end')?.value).format('DD-MM-YYYY')
+    }
+    this.solicitudesService.getPesajesbyFechas(consultaFechas).subscribe(res => {
+      this.spinner.hide();
+      $('#opcionesGenerales').modal('hide');
+      $('#verPesajes').modal('show');
+      if (res.data > 0) {
+        this.sinPesajes = false;
+        this.totalPesajes = res.data;
+      } else {
+        this.sinPesajes = true;
+
+      }
+    })
   }
 
   validarConfirmacionSolicitud(accion: any) {
@@ -179,6 +438,7 @@ export class BeneficioMainComponent implements OnInit {
         botones.push(
           { nombre: 'Confirmar cuenta', icono: 'check_circle', class: 'btn-container mt-2 ml-2', click: () => this.guardarConfirmacionCuenta(accion) },
         )
+
       } else if (!res.data.valido) { //Faltantes y sobrantes invalidos
         this.solicitudValida = false;
         this.controlesModalSecundario.push(
@@ -193,10 +453,12 @@ export class BeneficioMainComponent implements OnInit {
           this.faltanteSobrante = "S"
           let sobrante: number = res.data.pesoBascula - res.data.pesoIngresado;
           this.complementoSolicitudInvalida = `Este anexo es para indicarle que el sistema detecto un Sobrante de ${sobrante.toFixed(2)}Tn, el total ingresado por el agricultor es: ${parseFloat(res.data.pesoIngresado).toFixed(2)}Tn y el total ingresado por Peso Cabal es: ${parseFloat(res.data.pesoBascula).toFixed(2)}Tn, debe indicarle al Beneficio del Café lo que quiere hacer con el sobrante.`;
+          this.totalPesoSobranteFaltante = sobrante.toFixed(2);
         } else if (res.data.faltanteSobrante === "F") {
           this.faltanteSobrante = "F"
           let faltante: number = res.data.pesoIngresado - res.data.pesoBascula;
           this.complementoSolicitudInvalida = `Este anexo es para indicarle que el sistema detecto un Faltante de ${faltante.toFixed(2)}Tn, el total ingresado por el agricultor es: ${parseFloat(res.data.pesoIngresado).toFixed(2)}Tn y el total ingresado por Peso Cabal es: ${parseFloat(res.data.pesoBascula).toFixed(2)}Tn, debe indicarle al Beneficio del Café lo que quiere hacer con el faltante.`;
+          this.totalPesoSobranteFaltante = faltante.toFixed(2);
         }
 
         botones.push(
@@ -316,7 +578,7 @@ export class BeneficioMainComponent implements OnInit {
     let rechazo = {
       "solicitud": this.solicitud,
       "observaciones": this.controlesSecundariosFormGroup.get('rechazo')?.value,
-      "usuarioCreacion":  localStorage.getItem('idUser'),
+      "usuarioCreacion": localStorage.getItem('idUser'),
       "fechaCreacion": new Date()
     }
     this.solicitudesService.crearRechazo(rechazo).subscribe(res => {
@@ -394,6 +656,7 @@ export class BeneficioMainComponent implements OnInit {
       "observaciones": this.controlesSecundariosFormGroup.get('observaciones')?.value,
       "sobranteFaltante": this.faltanteSobrante,
       "usuarioCreacion": localStorage.getItem('idUser'),
+      "peso": Number(this.totalPesoSobranteFaltante)
     }
 
     this.solicitudesService.crearAnexo(anexo).subscribe(res => {
@@ -522,6 +785,7 @@ export class BeneficioMainComponent implements OnInit {
     this.controlesSecundariosFormGroup.updateValueAndValidity();
     $('#opcionesGenerales').modal('show');
     $('#modalSecundary').modal('hide');
+    $('#verPesajes').modal('hide');
   }
 
 }

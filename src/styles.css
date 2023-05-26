@@ -175,6 +175,8 @@ table {
   color: white;
   text-align: left;
   font-size: 14px;
+  width: 600px;
+  margin-left: 5px;
 }
 
 .modal .modal-dialog {
